@@ -19,21 +19,39 @@ public class UserDaoImp implements UserDao {
       sessionFactory.getCurrentSession().save(user);
    }
 
-//   @Override
-//   @SuppressWarnings("unchecked")
-//   public List<User> listUsers() {
-//      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
-//      return query.getResultList();
-//   }
+   @Override
+   @SuppressWarnings("unchecked")
+   public List<User> listUsers() {
+      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
+      return query.getResultList();
+   }
 
    @Override
    @SuppressWarnings("unchecked")
-   public List<User> getByCar(String model, int series) {
-      String hql = "FROM User where Car.model = :modelName AND Car.series = :seriesNum";
-      TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery(hql); //Почему-то этот запрос не проходит
-      query.setParameter("modelName", model);
-      query.setParameter("seriesNum", series);
+   public List<User> getByCar(String model, Integer series) {
+      TypedQuery<User> query=sessionFactory.getCurrentSession()
+              .createQuery("SELECT u FROM User u LEFT JOIN FETCH u.car WHERE u.car.model = :model AND u.car.series = :series")
+              .setParameter("model", model)
+              .setParameter("series", series);
       return query.getResultList();
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public User getUserByCarModel(String model) {
+      return (User) sessionFactory.getCurrentSession()
+              .createQuery("SELECT u FROM User u LEFT JOIN FETCH u.car WHERE u.car.model = :model")
+              .setParameter("model", model)
+              .uniqueResult();
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public User getUserByCarSeries(Integer series) {
+      return (User) sessionFactory.getCurrentSession()
+              .createQuery("SELECT u FROM User u LEFT JOIN FETCH u.car WHERE u.car.series = :series")
+              .setParameter("series", series)
+              .uniqueResult();
    }
 
 }
