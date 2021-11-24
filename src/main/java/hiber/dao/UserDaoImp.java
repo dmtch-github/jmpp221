@@ -19,10 +19,20 @@ public class UserDaoImp implements UserDao {
       sessionFactory.getCurrentSession().save(user);
    }
 
+//   @Override
+//   @SuppressWarnings("unchecked")
+//   public List<User> listUsers() {
+//      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
+//      return query.getResultList();
+//   }
+
    @Override
    @SuppressWarnings("unchecked")
-   public List<User> listUsers() {
-      TypedQuery<User> query=sessionFactory.getCurrentSession().createQuery("from User");
+   public List<User> getByCar(String model, int series) {
+      String hql = "FROM User where Car.model = :modelName AND Car.series = :seriesNum";
+      TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery(hql); //Почему-то этот запрос не проходит
+      query.setParameter("modelName", model);
+      query.setParameter("seriesNum", series);
       return query.getResultList();
    }
 
